@@ -1,15 +1,9 @@
 import { Composition, Still } from "remotion";
 import { CasoDoSindico, DURACAO_TOTAL } from "./CasoDoSindico";
-import {
-  QuadroAcademia,
-  QuadroPortaria,
-  QuadroCelular,
-  QuadroRegistro,
-  QuadroPistas,
-} from "./cenas/teste/Quadros";
+import * as Q from "./cenas/teste/Quadros";
 
-export const LARGURA = 720;
-export const ALTURA = 1280;
+export const LARGURA = 1280;
+export const ALTURA = 720;
 export const FPS = 30;
 
 export const RemotionRoot: React.FC = () => {
@@ -25,31 +19,79 @@ export const RemotionRoot: React.FC = () => {
       />
       <Still
         id="Teste-Academia"
-        component={QuadroAcademia}
+        component={Q.QuadroAcademia}
         width={LARGURA}
         height={ALTURA}
       />
       <Still
         id="Teste-Portaria"
-        component={QuadroPortaria}
+        component={Q.QuadroPortaria}
         width={LARGURA}
         height={ALTURA}
       />
       <Still
-        id="Teste-Celular"
-        component={QuadroCelular}
+        id="Teste-Camarim"
+        component={Q.QuadroCamarim}
         width={LARGURA}
         height={ALTURA}
       />
       <Still
-        id="Teste-Registro"
-        component={QuadroRegistro}
+        id="Teste-CamarimMeninas"
+        component={Q.QuadroCamarimMeninas}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Pista"
+        component={Q.QuadroPista}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Corredor"
+        component={Q.QuadroCorredor}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Estacionamento"
+        component={Q.QuadroEstacionamento}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Fachada"
+        component={Q.QuadroFachada}
         width={LARGURA}
         height={ALTURA}
       />
       <Still
         id="Teste-Pistas"
-        component={QuadroPistas}
+        component={Q.QuadroPistas}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Evidencias"
+        component={Q.QuadroEvidencias}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Telas"
+        component={Q.QuadroTelas}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Elenco"
+        component={Q.QuadroElenco}
+        width={LARGURA}
+        height={ALTURA}
+      />
+      <Still
+        id="Teste-Poses"
+        component={Q.QuadroPoses}
         width={LARGURA}
         height={ALTURA}
       />

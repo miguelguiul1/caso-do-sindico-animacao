@@ -1,273 +1,304 @@
+import React from "react";
 import { AbsoluteFill, Series } from "remotion";
-import { CenaFalas, Fala, duracaoCena } from "./cenas/CenaFalas";
-import { Votacao } from "./cenas/Votacao";
+import {
+  CenaFalas,
+  AtorNaCena,
+  CartaoNaFala,
+  Fala,
+  duracaoCena,
+} from "./cenas/CenaFalas";
+import { FALAS, Quem } from "./falas";
+import { Pose } from "./personagens/Personagem";
+import { AtorId } from "./personagens/Elenco";
 import { SalaoDeFestas } from "./cenarios/SalaoDeFestas";
-import { Academia } from "./cenarios/Academia";
-import { Portaria } from "./cenarios/Portaria";
-import { CartaoCelular } from "./componentes/CartaoCelular";
-import { RegistroAcesso } from "./componentes/RegistroAcesso";
-import { CartaoPistas } from "./componentes/CartaoPistas";
+import { Camarim } from "./cenarios/Camarim";
+import { CamarimDasMeninas } from "./cenarios/CamarimDasMeninas";
+import { PistaDeDanca } from "./cenarios/PistaDeDanca";
+import { Corredor } from "./cenarios/Corredor";
+import { Estacionamento } from "./cenarios/Estacionamento";
+import { Fachada } from "./cenarios/Fachada";
+import { Fita } from "./cenarios/Fita";
+import { CartaoPistas, Plaquinhas } from "./componentes/CartaoPistas";
+import {
+  CartaoCamera,
+  CartaoLaboratorio,
+  CartaoLive,
+  CartaoMaoUnha,
+  CartaoPlanilha,
+  CartaoStory,
+  CartaoTikTok,
+} from "./componentes/CartoesEvidencias";
+import {
+  CartaoContagem,
+  CartaoEnvelopes,
+  CartaoHorario,
+  CartaoPainel,
+  CartaoPerguntas,
+  CartaoRelogio,
+  CartaoTrofeu,
+} from "./componentes/CartoesTela";
 
-const S = 30; // fps
+const S = 30;
 
-// Cena 1: Otávio caído no salão, com fita amarela
-const cena1: Fala[] = [
-  {
-    texto:
-      "Sexta-feira, 17h05. Condomínio Terrara. O síndico Otávio Mendes é encontrado morto no salão de festas.",
-    frames: 5 * S,
-    pose: "caido",
-  },
-  {
-    texto:
-      "Veneno no suco. Três pessoas tinham motivo. Uma delas está mentindo.",
-    pose: "caido",
-  },
-];
-const Fita = () => (
-  <AbsoluteFill>
-    <svg width={720} height={1280} viewBox="0 0 720 1280">
-      <g transform="rotate(-8 360 760)">
-        <rect
-          x={-40}
-          y={720}
-          width={800}
-          height={46}
-          fill="#facc15"
-          stroke="#050810"
-          strokeWidth={6}
+const ROTULO: Record<Quem, string> = {
+  Narrador: "Narrador",
+  Delegado: "Delegado Paulo",
+  Perito: "Dr. Matos",
+  Bruno: "Bruno",
+  Gui: "Gui",
+  Rafa: "Rafa",
+  Duda: "Duda",
+  "Seu Jorge": "Seu Jorge",
+  Larissa: "Larissa",
+};
+
+// Poses por fala (o resto fica "parado")
+const POSES: Record<number, Partial<Record<AtorId, Pose>>> = {
+  5: { paulo: "apontando" },
+  8: { bruno: "apontando" },
+  12: { matos: "examinando" },
+  14: { matos: "examinando" },
+  24: { matos: "examinando" },
+  27: { gui: "chorando" },
+  28: { gui: "chorando" },
+  29: { gui: "chorando" },
+  33: { rafa: "nervoso" },
+  34: { rafa: "mostrandoCelular" },
+  42: { jorge: "assustado" },
+  43: { jorge: "nervoso" },
+  44: { jorge: "apontando" },
+  50: { larissa: "mostrandoCelular" },
+  58: { matos: "digitando" },
+  59: { matos: "digitando" },
+  60: { matos: "digitando" },
+  63: { paulo: "apontando" },
+};
+
+const pista = (numero: 1 | 2 | 3 | 4 | 5 | 6): CartaoNaFala => ({
+  no: <CartaoPistas numero={numero} />,
+});
+const centro = (no: React.ReactNode): CartaoNaFala => ({ no, pos: "centro" });
+
+// Cartões por fala
+const CARTOES: Record<number, CartaoNaFala[]> = {
+  3: [pista(1)],
+  10: [centro(<CartaoPainel />)],
+  16: [{ no: <CartaoHorario /> }],
+  17: [centro(<Plaquinhas />)],
+  18: [pista(1)],
+  19: [pista(2)],
+  20: [pista(3)],
+  21: [pista(4)],
+  22: [pista(5)],
+  23: [pista(6)],
+  25: [centro(<CartaoPainel />)],
+  30: [
+    {
+      no: (
+        <CartaoCamera
+          titulo="Câmera do corredor"
+          nome="Gui"
+          inicio="23h05"
+          fim="23h38"
         />
-        <text
-          x={360}
-          y={754}
-          textAnchor="middle"
-          fontSize={26}
-          fontWeight={900}
-          fontFamily="Arial Black, Arial"
-          fill="#050810"
-          letterSpacing={6}
-        >
-          ISOLADO · ISOLADO · ISOLADO · ISOLADO
-        </text>
-      </g>
-    </svg>
-  </AbsoluteFill>
+      ),
+    },
+  ],
+  35: [{ no: <CartaoLive /> }],
+  40: [{ no: <CartaoTikTok /> }],
+  45: [
+    {
+      no: (
+        <CartaoCamera
+          titulo="Câmera do estacionamento"
+          nome="Seu Jorge"
+          inicio="23h10"
+          fim="23h50"
+          caixas
+        />
+      ),
+    },
+  ],
+  50: [{ no: <CartaoStory /> }],
+  51: [centro(<CartaoContagem />)],
+  52: [centro(<CartaoPainel />)],
+  53: [centro(<CartaoEnvelopes />)],
+  54: [{ no: <CartaoStory /> }],
+  55: [{ no: <CartaoStory comparar /> }],
+  56: [{ no: <CartaoMaoUnha /> }],
+  57: [{ no: <CartaoMaoUnha comparar /> }],
+  58: [{ no: <CartaoPlanilha /> }],
+  59: [{ no: <CartaoPlanilha /> }],
+  60: [{ no: <CartaoLaboratorio /> }],
+  61: [
+    { ...pista(1), inicio: 20, frames: 130 },
+    { ...pista(4), inicio: 160 },
+  ],
+  62: [{ no: <CartaoRelogio /> }],
+  63: [centro(<CartaoPerguntas />)],
+  64: [{ no: <CartaoTrofeu /> }],
+  65: [centro(<CartaoPainel modo="resumo" />)],
+};
+
+const falasDe = (de: number, ate: number): Fala[] =>
+  FALAS.filter((f) => f.n >= de && f.n <= ate).map((f) => ({
+    texto: f.texto,
+    quem: ROTULO[f.quem],
+    poses: POSES[f.n],
+    cartoes: CARTOES[f.n],
+  }));
+
+type Bloco = {
+  cenario: React.ReactNode;
+  extra?: React.ReactNode;
+  elenco?: AtorNaCena[];
+  de: number;
+  ate: number;
+};
+
+const BRUNO_CAIDO = (x: number): AtorNaCena => ({
+  id: "bruno",
+  x,
+  pose: "caido",
+  sangue: true,
+});
+
+const BLOCOS: Bloco[] = [
+  // Cena 1: abertura
+  { cenario: <Fachada />, de: 1, ate: 1 },
+  { cenario: <Camarim cabo />, elenco: [BRUNO_CAIDO(380)], de: 2, ate: 3 },
+  {
+    cenario: <Camarim />,
+    extra: <Fita />,
+    elenco: [{ id: "paulo", x: 500 }],
+    de: 4,
+    ate: 6,
+  },
+  // Cena 2: flashback
+  {
+    cenario: <PistaDeDanca claro relogio="22:30" />,
+    elenco: [{ id: "bruno", x: 640 }],
+    de: 7,
+    ate: 10,
+  },
+  // Cena 3: o corpo
+  {
+    cenario: <Camarim cabo />,
+    elenco: [
+      { id: "paulo", x: 200 },
+      { id: "matos", x: 350 },
+      BRUNO_CAIDO(500),
+    ],
+    de: 11,
+    ate: 16,
+  },
+  // Cena 4: as pistas
+  {
+    cenario: <Camarim cabo />,
+    elenco: [
+      { id: "paulo", x: 200 },
+      { id: "matos", x: 350 },
+      BRUNO_CAIDO(520),
+    ],
+    de: 17,
+    ate: 25,
+  },
+  // Cena 5: Gui
+  {
+    cenario: <Corredor />,
+    elenco: [
+      { id: "paulo", x: 300 },
+      { id: "gui", x: 560 },
+    ],
+    de: 26,
+    ate: 30,
+  },
+  // Cena 6: Rafa
+  {
+    cenario: <PistaDeDanca />,
+    elenco: [
+      { id: "paulo", x: 300 },
+      { id: "rafa", x: 560 },
+    ],
+    de: 31,
+    ate: 35,
+  },
+  // Cena 7: Duda
+  {
+    cenario: <CamarimDasMeninas />,
+    elenco: [
+      { id: "paulo", x: 300 },
+      { id: "duda", x: 560 },
+    ],
+    de: 36,
+    ate: 40,
+  },
+  // Cena 8: seu Jorge
+  {
+    cenario: <Estacionamento />,
+    elenco: [
+      { id: "paulo", x: 300 },
+      { id: "jorge", x: 560 },
+    ],
+    de: 41,
+    ate: 45,
+  },
+  // Cena 9: Larissa
+  {
+    cenario: <SalaoDeFestas />,
+    elenco: [
+      { id: "paulo", x: 300 },
+      { id: "larissa", x: 560 },
+    ],
+    de: 46,
+    ate: 50,
+  },
+  // Cena 10: voto parcial
+  { cenario: <SalaoDeFestas />, de: 51, ate: 53 },
+  // Cena 11: novas evidências
+  {
+    cenario: <Camarim cabo />,
+    elenco: [{ id: "matos", x: 330 }],
+    de: 54,
+    ate: 61,
+  },
+  // Cena 12: desafio final
+  {
+    cenario: <SalaoDeFestas />,
+    elenco: [{ id: "paulo", x: 380 }],
+    de: 62,
+    ate: 64,
+  },
+  { cenario: <Fachada />, de: 65, ate: 65 },
+  {
+    cenario: <SalaoDeFestas />,
+    elenco: [{ id: "paulo", x: 380 }],
+    de: 66,
+    ate: 66,
+  },
+];
+
+const CENAS = BLOCOS.map((b) => ({ ...b, falas: falasDe(b.de, b.ate) }));
+
+export const DURACAO_TOTAL = CENAS.reduce(
+  (s, c) => s + duracaoCena(c.falas),
+  0,
 );
-
-const cena2: Fala[] = [
-  {
-    texto:
-      "Eu preciso falar das contas agora. Traz os comprovantes, eu espero.",
-  },
-];
-
-const cena3: Fala[] = [
-  {
-    texto:
-      "Sou o Ananias. Ele me multou três vezes e a gente brigou semana passada. Mas eu não matei ninguém.",
-    frames: 5 * S,
-  },
-  {
-    texto:
-      "Entrei na academia às 15h50 e fiquei até 16h55. Não tinha mais ninguém lá.",
-    cartao: <RegistroAcesso />,
-    cartaoInicio: 15,
-    cartaoFrames: 3 * S,
-  },
-  {
-    texto:
-      "Na saída vi a porta do salão aberta e o Otávio no chão. Liguei pra portaria.",
-    pose: "assustado",
-  },
-];
-
-const cena4: Fala[] = [
-  {
-    texto: "Sou o Marcos, porteiro. Não saí da portaria em nenhum momento.",
-    pose: "nervoso",
-  },
-  {
-    texto:
-      "A câmera travou uns 30 minutos, isso acontece sempre. E a chave do salão fica no gancho, qualquer um pega.",
-    frames: 5 * S,
-    pose: "nervoso",
-  },
-  {
-    texto: "Ele ia me demitir na segunda, mas eu nunca faria isso.",
-    pose: "nervoso",
-  },
-];
-
-const cena5: Fala[] = [
-  { texto: "Sou o Toni, tesoureiro. O Otávio era meu amigo." },
-  {
-    texto: "Eu estava na academia, treinei das 15h30 às 17h. Tenho até foto.",
-    cartao: <CartaoCelular />,
-    cartaoInicio: 20,
-    cartaoFrames: 3 * S,
-  },
-  {
-    texto:
-      "A gente falou das contas semana passada, mas estava tudo certo. Não tenho motivo nenhum.",
-    frames: 5 * S,
-  },
-];
-const Pasta = () => (
-  <AbsoluteFill>
-    <svg width={720} height={1280} viewBox="0 0 720 1280">
-      <rect
-        x={90}
-        y={930}
-        width={150}
-        height={110}
-        rx={10}
-        fill="#78350f"
-        stroke="#050810"
-        strokeWidth={8}
-      />
-      <rect
-        x={140}
-        y={915}
-        width={50}
-        height={22}
-        rx={6}
-        fill="none"
-        stroke="#050810"
-        strokeWidth={8}
-      />
-      {[0, 1].map((i) => (
-        <g key={i} transform={`translate(${130 + i * 60} 880)`}>
-          <rect
-            width={46}
-            height={60}
-            rx={4}
-            fill="#f8fafc"
-            stroke="#050810"
-            strokeWidth={5}
-          />
-          <text
-            x={23}
-            y={30}
-            textAnchor="middle"
-            fontSize={9}
-            fontWeight={900}
-            fontFamily="Arial Black, Arial"
-            fill="#22c55e"
-          >
-            Doce
-          </text>
-          <text
-            x={23}
-            y={44}
-            textAnchor="middle"
-            fontSize={9}
-            fontWeight={900}
-            fontFamily="Arial Black, Arial"
-            fill="#22c55e"
-          >
-            Leve
-          </text>
-        </g>
-      ))}
-    </svg>
-  </AbsoluteFill>
-);
-
-const cena6: Fala[] = [
-  {
-    texto:
-      "A perícia encontrou: horário da morte, entre 16h15 e 16h45. Causa: envenenamento.",
-    frames: 8 * S,
-    cartao: <PistasSequencia />,
-    cartaoInicio: 0,
-    cartaoFrames: 8 * S,
-  },
-  {
-    texto:
-      "Três suspeitos, três histórias. Quem matou Otávio Mendes? Comente A, B ou C.",
-  },
-];
-
-// pistas 1 a 4, 2s cada
-import { Sequence } from "remotion";
-function PistasSequencia() {
-  return (
-    <>
-      {([1, 2, 3, 4] as const).map((n, i) => (
-        <Sequence
-          key={n}
-          from={i * 2 * S}
-          durationInFrames={2 * S}
-          layout="none"
-        >
-          <CartaoPistas numero={n} />
-        </Sequence>
-      ))}
-    </>
-  );
-}
-
-const VOTACAO = 5 * S;
-
-export const DURACAO_TOTAL =
-  duracaoCena(cena1) +
-  duracaoCena(cena2) +
-  duracaoCena(cena3) +
-  duracaoCena(cena4) +
-  duracaoCena(cena5) +
-  duracaoCena(cena6) +
-  VOTACAO;
+export const SEGUNDOS_TOTAL = DURACAO_TOTAL / S;
 
 export const CasoDoSindico: React.FC = () => (
   <AbsoluteFill>
     <Series>
-      <Series.Sequence durationInFrames={duracaoCena(cena1)}>
-        <CenaFalas
-          cenario={<SalaoDeFestas />}
-          falas={cena1}
-          personagem={{ cor: "#7c3aed", x: 60, escala: 1.2 }}
-          extra={<Fita />}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={duracaoCena(cena2)}>
-        <CenaFalas
-          cenario={<SalaoDeFestas />}
-          falas={cena2}
-          personagem={{ cor: "#7c3aed" }}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={duracaoCena(cena3)}>
-        <CenaFalas
-          cenario={<Academia />}
-          falas={cena3}
-          personagem={{ cor: "#ef4444" }}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={duracaoCena(cena4)}>
-        <CenaFalas
-          cenario={<Portaria />}
-          falas={cena4}
-          personagem={{ cor: "#16a34a" }}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={duracaoCena(cena5)}>
-        <CenaFalas
-          cenario={<SalaoDeFestas />}
-          falas={cena5}
-          personagem={{ cor: "#f59e0b", x: 330 }}
-          extra={<Pasta />}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={duracaoCena(cena6)}>
-        <CenaFalas
-          cenario={<SalaoDeFestas />}
-          falas={cena6}
-          personagem={null}
-        />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={VOTACAO}>
-        <Votacao />
-      </Series.Sequence>
+      {CENAS.map((c) => (
+        <Series.Sequence key={c.de} durationInFrames={duracaoCena(c.falas)}>
+          <CenaFalas
+            cenario={c.cenario}
+            extra={c.extra}
+            elenco={c.elenco}
+            falas={c.falas}
+          />
+        </Series.Sequence>
+      ))}
     </Series>
   </AbsoluteFill>
 );
